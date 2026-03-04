@@ -78,7 +78,7 @@ public class AdminHouseController {
 		 * 
 		 * */
 		Page<House> housePage;
-		
+
 		/* keyword= について
 		 * 
 		 * これによって…コントローラが受けとり

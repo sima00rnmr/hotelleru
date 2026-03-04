@@ -24,12 +24,12 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
 	<!-- th:href とは
-spring特有らしい
-SpringはアプリのURLを自動で調整するので
-Thymeleafが自動で変換してくれる仕組み
-@{} は
-「アプリのルートからのパス」の意味
--->
+	spring特有らしい
+	SpringはアプリのURLを自動で調整するので
+	Thymeleafが自動で変換してくれる仕組み
+	@{} は
+	「アプリのルートからのパス」の意味
+	-->
 	<link th:href="@{/css/style.css}" rel="stylesheet">
 
 	<title>民宿一覧</title>
@@ -62,7 +62,18 @@ Thymeleafが自動で変換してくれる仕組み
 					<div class="col-xxl-9 col-xl-10 col-lg-11">
 						<h1 class="mb-4 text-center">民宿一覧</h1>
 						<div class="d-flex justify-content-end">
-							<a href="#" class="btn text-white shadow-sm mb-3 moattravel-btn">登録</a>
+							<div class="d-flex justify-content-between align-items-end flex-wrap">
+								<form method="get" th:action="@{/admin/houses}" class="mb-3">
+									<div class="input-group">
+										<input type="text" class="form-control" name="keyword" th:value="${keyword}"
+											placeholder="民宿名">
+										<button type="submit"
+											class="btn text-white shadow-sm moattravel-btn">検索</button>
+									</div>
+								</form>
+
+								<a href="#" class="btn text-white shadow-sm mb-3 moattravel-btn">登録</a>
+							</div>
 						</div>
 
 						<table class="table">
@@ -87,9 +98,14 @@ Thymeleafが自動で変換してくれる仕組み
 									繰り返す、処理をさせている
 									→だから実際のWebページでは
 									一覧が１つずつ連続して並ぶ表示になっていた
-									
+									>> <tr th:each="house : ${housePage.content}">
 								-->
 
+								<!--※※手順書は　<tr th:each="house : ${housePage}">
+									となっていたけど、
+									Pageオブジェクトを直接回すとエラーになる可能性あり。
+									と、回答があったため、手順書通りに直すのは一旦保留
+									-->
 								<tr th:each="house : ${housePage.content}">
 
 									<!-- th:text
@@ -101,7 +117,6 @@ Thymeleafが自動で変換してくれる仕組み
 										th:each で繰り返し
 										th:text で中身を表示
 										している感じ
-										
 									-->
 									<td th:text="${house.getId()}"></td>
 									<td th:text="${house.getName()}"></td>
@@ -112,24 +127,25 @@ Thymeleafが自動で変換してくれる仕組み
 								</tr>
 							</tbody>
 						</table>
+
+
 						<!-- ページネーション-->
+
 						<!--ページネーションとは
 							今どこにいるか？
 							前に行ける？
 							次に行ける？
 							全部で何ページ？をPageオブジェクトが教えてくれる
 						 -->
-						 <!-- th:ifは
+						<!-- th:ifは
 						javaでいうところの
 						if (条件) {
 						   分岐内容
 						}
 						と同様の役割
-						ページ数が>1ならページリンクを出す、それ以外は出さない
-						の意味
-						
+						ページ数が>1ならページリンクを出す、それ以外は出さないの意味
 						-->
-						<div th:if="${housePage.getTotalPages()>1}" class="d-flex justify-content-center">
+						<div th:if="${housePage.getTotalPages() > 1}" class="d-flex justify-content-center">
 							<nav aria-label="民宿一覧ページ">
 								<ul class="pagination">
 									<li class="page-item">
@@ -145,17 +161,17 @@ Thymeleafが自動で変換してくれる仕組み
 										-->
 										<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
 										<a th:unless="${housePage.isFirst()}"
-											th:href="@{/admin/houses(page=${housePage.getNumber()-1})}"
+											th:href="@{/admin/houses(page=${housePage.getNumber()-1}, keyword=${keyword})}"
 											class="page-link moattravel-page-link">前</a>
 									</li>
-									
+
 									<!--　最後のページになるまで
 									～ページ目の表記を繰り返してね　の意味
 									※th:each　は繰り返しを意味している
 									-->
 									<li th:each="i: ${#numbers.sequence(0,housePage.getTotalPages()-1)}"
 										class="page-item">
-										
+
 										<!-- この分岐…
 										数字iが今いるページと一緒ならリンクにしない＋別の色を指定
 										
@@ -164,21 +180,21 @@ Thymeleafが自動で変換してくれる仕組み
 										-->
 										<span th:if="${i == housePage.getNumber()}"
 											class="page-link active moattravel-active" th:text="${i + 1}"></span>
-											
-											<!-- getNumber() の役割
+
+										<!-- getNumber() の役割
 												今いるページ番号の取得
 												ただし、0からスタートするからテキスト（ユーザー目線）ではその値に
 												+1したものを見せている
 												ので、見かけ上は0ページ目が存在していない
 											-->
 										<a th:unless="${i == housePage.getNumber()}"
-											th:href="@{/admin/houses(page = ${i})}"
+											th:href="@{/admin/houses(page=${i},keyword=${keyword})}"
 											class="page-link moattravel-page-link" th:text="${i + 1}"></a>
 									</li>
 									<li class="page-item">
 										<span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
 										<a th:unless="${housePage.isLast()}"
-											th:href="@{/admin/houses(page = ${housePage.getNumber() + 1})}"
+											th:href="@{/admin/houses(page=${housePage.getNumber()+1},keyword=${keyword})}"
 											class="page-link moattravel-page-link">次</a>
 
 									</li>
