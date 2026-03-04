@@ -5,11 +5,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Bootstrap -->
-	
+
 	<!--Bootstrap
 		→デザインを一瞬で整えてくれるCSS集
 		class="table"　これだけで、表が綺麗になる。
-	--> 
+	-->
 	<!--以下のhttps://cdn~みたいなのを記載することで
 	ネット上のBootstrapを直接読み込んでいる
 	＝自分のプロジェクトのファイルに何も入れることなく装飾が使えている
@@ -23,7 +23,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
-<!-- th:href とは
+	<!-- th:href とは
 spring特有らしい
 SpringはアプリのURLを自動で調整するので
 Thymeleafが自動で変換してくれる仕組み
@@ -89,8 +89,9 @@ Thymeleafが自動で変換してくれる仕組み
 									一覧が１つずつ連続して並ぶ表示になっていた
 									
 								-->
-								<tr th:each="house : ${houses}">
-									
+
+								<tr th:each="house : ${housePage.content}">
+
 									<!-- th:text
 										houseオブジェクトの名前を表示している
 										house.getName();　みたいな感じ
@@ -111,7 +112,34 @@ Thymeleafが自動で変換してくれる仕組み
 								</tr>
 							</tbody>
 						</table>
+						<!-- ページネーション-->
+						<div th:if="${housePage.getTotalPages()>1}" class="d-flex justify-content-center">
+							<nav aria-label="民宿一覧ページ">
+								<ul class="pagination">
+									<li class="page-item">
+										<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
+										<a th:unless="${housePage.isFirst()}"
+											th:href="@{/admin/houses(page=${housePage.getNumber()-1})}"
+											class="page-link moattravel-page-link">前</a>
+									</li>
+									<li th:each="i: ${#numbers.sequence(0,housePage.getTotalPages()-1)}"
+										class="page-item">
+										<span th:if="${i == housePage.getNumber()}"
+											class="page-link active moattravel-active" th:text="${i + 1}"></span>
+										<a th:unless="${i == housePage.getNumber()}"
+											th:href="@{/admin/houses(page = ${i})}"
+											class="page-link moattravel-page-link" th:text="${i + 1}"></a>
+									</li>
+									<li class="page-item">
+										<span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
+										<a th:unless="${housePage.isLast()}"
+											th:href="@{/admin/houses(page = ${housePage.getNumber() + 1})}"
+											class="page-link moattravel-page-link">次</a>
 
+									</li>
+								</ul>
+							</nav>
+						</div>
 					</div>
 				</div>
 			</div>

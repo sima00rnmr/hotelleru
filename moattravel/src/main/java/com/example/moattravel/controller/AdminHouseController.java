@@ -4,8 +4,10 @@ package com.example.moattravel.controller;
  * 
  * */
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,20 +27,42 @@ import com.example.moattravel.repository.HouseRepository;
 @RequestMapping("/admin/houses")
 
 public class AdminHouseController {
-	 /*変更は許容しない
-	  * DB操作担当をこのクラスで使う…宣言
-	  * */
+	/*変更は許容しない
+	 * DB操作担当をこのクラスで使う…宣言
+	 * */
 	private final HouseRepository houseRepository;
 
 	public AdminHouseController(HouseRepository houseRepository) {
 		this.houseRepository = houseRepository;
 	}
 
+	/*ページネーションとは？
+	 * houseRepository.findAll();
+	 * は、全部DBのデータをまとめて取ってくる
+	 * 今は57件だから良いけど　多ければ重くなる
+	 * ので、10けんずつの表示にして重さを解消する
+	 * 
+	 * */
 	@GetMapping
-	public String index(Model model) {
-		List<House> houses = houseRepository.findAll();
+	/*Pageable　とは…
+	 * 10件ずつ表示の11件目以降を2ページ目に表示する
+	 * ページ設定の箱、を作ってくれる仕組みのことである
+	 * findAll(pageable)で「指定ページ分だけ」取る
+	 * ことが出来るのである。
+	 * */
 
-		model.addAttribute("houses", houses);
+	public String index(Model model,
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
+		/*戻り値が
+		 * ListからPageになってる…
+		 * 実際はデータから取ってきているが
+		 * 今何ページ目であるのか、全体で何ページあるのか
+		 * 前後のページの有無を教えてくれている
+		 * 
+		 * */
+		Page<House> housePage = houseRepository.findAll(pageable);
+
+		model.addAttribute("housePage", housePage);
 		return "admin/houses/index";
 
 	}
