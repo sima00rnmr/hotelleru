@@ -113,19 +113,64 @@ Thymeleafが自動で変換してくれる仕組み
 							</tbody>
 						</table>
 						<!-- ページネーション-->
+						<!--ページネーションとは
+							今どこにいるか？
+							前に行ける？
+							次に行ける？
+							全部で何ページ？をPageオブジェクトが教えてくれる
+						 -->
+						 <!-- th:ifは
+						javaでいうところの
+						if (条件) {
+						   分岐内容
+						}
+						と同様の役割
+						ページ数が>1ならページリンクを出す、それ以外は出さない
+						の意味
+						
+						-->
 						<div th:if="${housePage.getTotalPages()>1}" class="d-flex justify-content-center">
 							<nav aria-label="民宿一覧ページ">
 								<ul class="pagination">
 									<li class="page-item">
+										<!-- isFirst() と isLast()
+											isFirst() 
+											→今1ページ目？
+											isLast()
+											→今最後のページ？
+											
+											の意味　ifと併せて　1ページ目だったらこの処理を
+											最後のページだったらこの処理を
+											と、条件分けをしている
+										-->
 										<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
 										<a th:unless="${housePage.isFirst()}"
 											th:href="@{/admin/houses(page=${housePage.getNumber()-1})}"
 											class="page-link moattravel-page-link">前</a>
 									</li>
+									
+									<!--　最後のページになるまで
+									～ページ目の表記を繰り返してね　の意味
+									※th:each　は繰り返しを意味している
+									-->
 									<li th:each="i: ${#numbers.sequence(0,housePage.getTotalPages()-1)}"
 										class="page-item">
+										
+										<!-- この分岐…
+										数字iが今いるページと一緒ならリンクにしない＋別の色を指定
+										
+										3ページ目にいるときは3ページ目のリンクに飛べないようにしている処理
+										今いるページは押せない。という制御
+										-->
 										<span th:if="${i == housePage.getNumber()}"
 											class="page-link active moattravel-active" th:text="${i + 1}"></span>
+											
+											<!-- getNumber() の役割
+												今いるページ番号の取得
+												ただし、0からスタートするからテキスト（ユーザー目線）ではその値に
+												+1したものを見せている
+												ので、見かけ上は0ページ目が存在していない
+											-->
 										<a th:unless="${i == housePage.getNumber()}"
 											th:href="@{/admin/houses(page = ${i})}"
 											class="page-link moattravel-page-link" th:text="${i + 1}"></a>
