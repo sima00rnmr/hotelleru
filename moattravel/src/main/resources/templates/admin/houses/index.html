@@ -50,6 +50,7 @@
 						/images/logo.pngのみの記載でアクセスできるってこと
 						Springbootでは　staticフォルダの中 = Webのルート
 						ということ
+						URLは@{} で囲むのが基本
 					-->
 					<img class="moattravel-logo me-1" th:src="@{/images/logo.png}" alt="moat Travel">
 				</a>
@@ -63,8 +64,21 @@
 						<h1 class="mb-4 text-center">民宿一覧</h1>
 						<div class="d-flex justify-content-end">
 							<div class="d-flex justify-content-between align-items-end flex-wrap">
+								<!-- method="get"　の意味
+									GETで送ると、URLは
+									admin/houses?keyword=moat
+									>>入力したkeywordがURLのパラメータになる
+									コントローラで @RequestParam で受け取れる
+								-->
 								<form method="get" th:action="@{/admin/houses}" class="mb-3">
 									<div class="input-group">
+										<!-- th:value="${keyword}"  の意味
+											画面を表示する時コントローラは
+											model.addAttribute("keyword", keyword);
+											その値をフォームに戻している。
+											ので、入力欄に直前に検索したワードが残る
+											
+										-->
 										<input type="text" class="form-control" name="keyword" th:value="${keyword}"
 											placeholder="民宿名">
 										<button type="submit"
@@ -159,7 +173,14 @@
 											最後のページだったらこの処理を
 											と、条件分けをしている
 										-->
+										<!-- 今表示しているのは1ページめかそれ以外かの判別
+										1ページ目じゃなかったら　前　のリンクを有効にする
+										-->
 										<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
+										<!-- ここでのkeyword=${keyword}は
+										前　のリンクを押しても　遷移先でも検索欄に言葉の内容を保持したままにする
+										の意味を持っている
+									-->
 										<a th:unless="${housePage.isFirst()}"
 											th:href="@{/admin/houses(page=${housePage.getNumber()-1}, keyword=${keyword})}"
 											class="page-link moattravel-page-link">前</a>
