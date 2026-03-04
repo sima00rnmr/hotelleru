@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.moattravel.entity.House;
 import com.example.moattravel.repository.HouseRepository;
@@ -42,6 +43,10 @@ public class AdminHouseController {
 	 * 今は57件だから良いけど　多ければ重くなる
 	 * ので、10けんずつの表示にして重さを解消する
 	 * 
+	 * ※実際
+	 * ページ指定がなければ全件取得になる
+	 * の認識で
+	 * 
 	 * */
 	@GetMapping
 	/*Pageable　とは…
@@ -51,8 +56,20 @@ public class AdminHouseController {
 	 * ことが出来るのである。
 	 * */
 
+	
+
 	public String index(Model model,
-			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
+			/*@RequestParam　って何？
+			 * URLのクエリパラメータを受け取る
+			 * 例: /admin/houses?keyword=東京
+			 * URLの ?◯◯=値 を受け取る係
+			 * 下記の検索欄に関連
+			 * ない場合はnullとしてうけとっている
+			 * 
+			 * */
+			
+			@RequestParam(name = "keyword", required = false) String keyword) {
 		/*戻り値が
 		 * ListからPageになってる…
 		 * 実際はデータから取ってきているが
@@ -60,9 +77,29 @@ public class AdminHouseController {
 		 * 前後のページの有無を教えてくれている
 		 * 
 		 * */
-		Page<House> housePage = houseRepository.findAll(pageable);
+		Page<House> housePage;
+		
+		/* keyword= について
+		 * 
+		 * これによって…コントローラが受けとり
+		 * あれば検索、無ければ全件表示、その文字を画面に戻す
+		 *の、動きをしている 
+		 *
+		 *ここの　％って何？
+		 *　これはSQLのLIKE '%東京%'と同じ
+		 *東京を含む～と同じ意味になる
+		 * */
+		//キーワードが存在していて空じゃない場合は～
+		if (keyword != null && !keyword.isEmpty()) {
+			//存在していたらそれを返すよ
+			housePage = houseRepository.findByNameLike("%" + keyword + "%", pageable);
+		} else {
+			//無かったら全件返すよ
+			housePage = houseRepository.findAll(pageable);
+		}
 
 		model.addAttribute("housePage", housePage);
+		model.addAttribute("keyword", keyword);
 		return "admin/houses/index";
 
 	}
