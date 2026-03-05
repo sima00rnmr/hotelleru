@@ -73,7 +73,8 @@
 								</div>
 							</form>
 
-							<a href="#" class="btn text-white shadow-sm mb-3 moattravel-btn">登録</a>
+							<a th:href="@{/admin/houses/register}" 
+							   class="btn text-white shadow-sm mb-3 moattravel-btn">登録</a>
 						</div>
 					</div>
 
@@ -107,7 +108,7 @@
 									Pageオブジェクトを直接回すとエラーになる可能性あり。
 									と、回答があったため、手順書通りに直すのは一旦保留
 									-->
-							<tr th:each="house : ${housePage}">
+						<tr th:each="house : ${housePage.content}">
 
 								<!-- th:text
 										houseオブジェクトの名前を表示している
@@ -216,13 +217,13 @@
 
 		<!-- フッター -->
 
-		<div th:replace="~{fragment::footer}"></div>
+		<div th:replace="~{fragment :: footer}"></div>
 	</div>
 
 	<!-- Bootstrap -->
 
 
-	<div th:replace="~{fragment::scripts}"></div>
+	<div th:replace="~{fragment :: scripts}"></div>
 
 
 

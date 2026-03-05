@@ -134,9 +134,9 @@ public class AdminHouseController {
 	/* 
 	 * ここのメソッドは
 	 * /admin/houses/register にアクセス
-     *空のフォームオブジェクトを作る
-     *それをHTMLに渡す
-     *register.html を表示する
+	 *空のフォームオブジェクトを作る
+	 *それをHTMLに渡す
+	 *register.html を表示する
 	 * 
 	 * 役割
 	 * 
