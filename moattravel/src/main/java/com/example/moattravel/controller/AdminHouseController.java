@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.moattravel.entity.House;
+import com.example.moattravel.form.HouseRegisterForm;
 import com.example.moattravel.repository.HouseRepository;
 
 //このクラスはコントローラーだよ
@@ -63,8 +64,6 @@ public class AdminHouseController {
 	 * ことが出来るのである。
 	 * */
 
-	
-
 	public String index(Model model,
 			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
 			/*@RequestParam　って何？
@@ -75,7 +74,7 @@ public class AdminHouseController {
 			 * ない場合はnullとしてうけとっている
 			 * 
 			 * */
-			
+
 			@RequestParam(name = "keyword", required = false) String keyword) {
 		/*戻り値が
 		 * ListからPageになってる…
@@ -110,26 +109,44 @@ public class AdminHouseController {
 		return "admin/houses/index";
 
 	}
-	
+
 	@GetMapping("/{id}")
-	public String show(@PathVariable(name = "id")Integer id,Model model) {
-		
+	public String show(@PathVariable(name = "id") Integer id, Model model) {
+
 		/*getReferenceById() って何をしている？
 		 * IDが～のHouseを1件だけ取ってきて　の意味
 		 * id=主キーなので重複がない∴1件だけ
 		 * 
 		 * 一覧画面で生成されたURL（例：/admin/houses/3）の
-         *「3」の部分が @GetMapping("/{id}") の {id} にバインドされる
-         *
-         *※バインド
-         *外から来た値を、プログラムの変数に入れること
-         *（URLを読む、値を取り出す、型変換する、引数に入れる　など…）
+		 *「3」の部分が @GetMapping("/{id}") の {id} にバインドされる
+		 *
+		 *※バインド
+		 *外から来た値を、プログラムの変数に入れること
+		 *（URLを読む、値を取り出す、型変換する、引数に入れる　など…）
 		 * */
-		House house =houseRepository.getReferenceById(id);
-		
-		model.addAttribute("house",house);
-		
-		return"admin/houses/show";
+		House house = houseRepository.getReferenceById(id);
+
+		model.addAttribute("house", house);
+
+		return "admin/houses/show";
+	}
+
+	/* 
+	 * ここのメソッドは
+	 * /admin/houses/register にアクセス
+     *空のフォームオブジェクトを作る
+     *それをHTMLに渡す
+     *register.html を表示する
+	 * 
+	 * 役割
+	 * 
+	 * 表示とフォーム用のオブジェクトを渡してる
+	 * */
+	@GetMapping("/register")
+	public String register(Model model) {
+		model.addAttribute("houseRegisterForm", new HouseRegisterForm());
+		return "admin/houses/register";
+
 	}
 
 }
