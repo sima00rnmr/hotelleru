@@ -34,6 +34,22 @@
 						</nav>
 
 						<h1 class="mb-4 text-center">民宿登録</h1>
+						
+						<!--ユーザーが入力したデータを
+						サーバーに送るための箱
+						登録内容をまとめて
+						"@{/admin/houses/create}"に送信する
+						※12章段階ではcreateを用意していないのでエラーになる
+						コントローラ上では
+						@PostMapping("/admin/houses/create")
+						th:actionと@PostMappingが一致すると　繋がる（送信できる）
+						
+						th:object
+						houseRegisterFormと紐づけている
+						
+						enctype="multipart/form-data"
+						画像をアップロード用				
+					-->
 						<form th:action="@{/admin/houses/create}" th:object="${houseRegisterForm}" method="post"
 							enctype="multipart/form-data">
 							<div class="form-group row mb-3">
