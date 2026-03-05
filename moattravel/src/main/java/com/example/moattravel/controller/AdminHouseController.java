@@ -11,6 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,7 +20,8 @@ import com.example.moattravel.repository.HouseRepository;
 
 //このクラスはコントローラーだよ
 @Controller
-/*@RequestMapping
+/*
+ *   >>@RequestMapping
  * URLの共通ルール（基準）を決めるアノテーション
  * このクラスの中のURLは全部"/admin/houses"から
  * 始まるようになる
@@ -41,11 +43,16 @@ public class AdminHouseController {
 	 * houseRepository.findAll();
 	 * は、全部DBのデータをまとめて取ってくる
 	 * 今は57件だから良いけど　多ければ重くなる
-	 * ので、10けんずつの表示にして重さを解消する
+	 * ので、10件ずつの表示にして重さを解消する
 	 * 
 	 * ※実際
 	 * ページ指定がなければ全件取得になる
 	 * の認識で
+	 * →現在のコード
+	 * @PageableDefault(page = 0, size = 10)
+	 * に修正したので
+	 * ページ指定がなくても 0ページ目・10件取得になる
+	 * 
 	 * 
 	 * */
 	@GetMapping
@@ -102,6 +109,27 @@ public class AdminHouseController {
 		model.addAttribute("keyword", keyword);
 		return "admin/houses/index";
 
+	}
+	
+	@GetMapping("/{id}")
+	public String show(@PathVariable(name = "id")Integer id,Model model) {
+		
+		/*getReferenceById() って何をしている？
+		 * IDが～のHouseを1件だけ取ってきて　の意味
+		 * id=主キーなので重複がない∴1件だけ
+		 * 
+		 * 一覧画面で生成されたURL（例：/admin/houses/3）の
+         *「3」の部分が @GetMapping("/{id}") の {id} にバインドされる
+         *
+         *※バインド
+         *外から来た値を、プログラムの変数に入れること
+         *（URLを読む、値を取り出す、型変換する、引数に入れる　など…）
+		 * */
+		House house =houseRepository.getReferenceById(id);
+		
+		model.addAttribute("house",house);
+		
+		return"admin/houses/show";
 	}
 
 }
