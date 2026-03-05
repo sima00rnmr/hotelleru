@@ -73,25 +73,28 @@
 								</div>
 							</form>
 
-							<a th:href="@{/admin/houses/register}" 
-							   class="btn text-white shadow-sm mb-3 moattravel-btn">登録</a>
+							<a th:href="@{/admin/houses/register}"
+								class="btn text-white shadow-sm mb-3 moattravel-btn">登録</a>
 						</div>
-					</div>
+						<div th:if="${successMessage}" class="alert alert-info">
+							<span th:text="${successMessage}"></span>
+						</div>
 
-					<table class="table">
-						<thead>
-							<tr>
-								<th scope="col">ID</th>
-								<th scope="col">民宿名</th>
-								<th scope="col">郵便番号</th>
-								<th scope="col">住所</th>
-								<th scope="col">電話番号</th>
-								<th scope="col"></th>
-							</tr>
-						</thead>
 
-						<tbody>
-							<!-- th:each（繰り返し）
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col">ID</th>
+									<th scope="col">民宿名</th>
+									<th scope="col">郵便番号</th>
+									<th scope="col">住所</th>
+									<th scope="col">電話番号</th>
+									<th scope="col"></th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<!-- th:each（繰り返し）
 									Controller上で記載した
 									model.addAttribute("houses", houses);は
 									housesという名前でListをHTMLに渡してる
@@ -103,14 +106,14 @@
 									>> <tr th:each="house : ${housePage.content}">
 								-->
 
-							<!--※※手順書は　<tr th:each="house : ${housePage}">
+								<!--※※手順書は　<tr th:each="house : ${housePage}">
 									となっていたけど、
 									Pageオブジェクトを直接回すとエラーになる可能性あり。
 									と、回答があったため、手順書通りに直すのは一旦保留
 									-->
-						<tr th:each="house : ${housePage.content}">
+								<tr th:each="house : ${housePage.content}">
 
-								<!-- th:text
+									<!-- th:text
 										houseオブジェクトの名前を表示している
 										house.getName();　みたいな感じ
 										Controller上で
@@ -120,26 +123,26 @@
 										th:text で中身を表示
 										している感じ
 									-->
-								<td th:text="${house.getId()}"></td>
-								<td th:text="${house.getName()}"></td>
-								<td th:text="${house.getPostalCode()}"></td>
-								<td th:text="${house.getAddress()}"></td>
-								<td th:text="${house.getPhoneNumber()}"></td>
-								<td><a th:href="@{/admin/houses/__${house.getId()}__}">詳細</a></td>
-							</tr>
-						</tbody>
-					</table>
+									<td th:text="${house.getId()}"></td>
+									<td th:text="${house.getName()}"></td>
+									<td th:text="${house.getPostalCode()}"></td>
+									<td th:text="${house.getAddress()}"></td>
+									<td th:text="${house.getPhoneNumber()}"></td>
+									<td><a th:href="@{/admin/houses/__${house.getId()}__}">詳細</a></td>
+								</tr>
+							</tbody>
+						</table>
 
 
-					<!-- ページネーション-->
+						<!-- ページネーション-->
 
-					<!--ページネーションとは
+						<!--ページネーションとは
 							今どこにいるか？
 							前に行ける？
 							次に行ける？
 							全部で何ページ？をPageオブジェクトが教えてくれる
 						 -->
-					<!-- th:ifは
+						<!-- th:ifは
 						javaでいうところの
 						if (条件) {
 						   分岐内容
@@ -147,11 +150,11 @@
 						と同様の役割
 						ページ数が>1ならページリンクを出す、それ以外は出さないの意味
 						-->
-					<div th:if="${housePage.getTotalPages() > 1}" class="d-flex justify-content-center">
-						<nav aria-label="民宿一覧ページ">
-							<ul class="pagination">
-								<li class="page-item">
-									<!-- isFirst() と isLast()
+						<div th:if="${housePage.getTotalPages() > 1}" class="d-flex justify-content-center">
+							<nav aria-label="民宿一覧ページ">
+								<ul class="pagination">
+									<li class="page-item">
+										<!-- isFirst() と isLast()
 											isFirst() 
 											→今1ページ目？
 											isLast()
@@ -161,57 +164,58 @@
 											最後のページだったらこの処理を
 											と、条件分けをしている
 										-->
-									<!-- 今表示しているのは1ページめかそれ以外かの判別
+										<!-- 今表示しているのは1ページめかそれ以外かの判別
 										1ページ目じゃなかったら　前　のリンクを有効にする
 										-->
-									<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
-									<!-- ここでのkeyword=${keyword}は
+										<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
+										<!-- ここでのkeyword=${keyword}は
 										前　のリンクを押しても　遷移先でも検索欄に言葉の内容を保持したままにする
 										の意味を持っている
 									-->
-									<a th:unless="${housePage.isFirst()}"
-										th:href="@{/admin/houses(page=${housePage.getNumber()-1}, keyword=${keyword})}"
-										class="page-link moattravel-page-link">前</a>
-								</li>
+										<a th:unless="${housePage.isFirst()}"
+											th:href="@{/admin/houses(page=${housePage.getNumber()-1}, keyword=${keyword})}"
+											class="page-link moattravel-page-link">前</a>
+									</li>
 
-								<!--　最後のページになるまで
+									<!--　最後のページになるまで
 									～ページ目の表記を繰り返してね　の意味
 									※th:each　は繰り返しを意味している
 									-->
-								<li th:each="i: ${#numbers.sequence(0,housePage.getTotalPages()-1)}" class="page-item">
+									<li th:each="i: ${#numbers.sequence(0,housePage.getTotalPages()-1)}"
+										class="page-item">
 
-									<!-- この分岐…
+										<!-- この分岐…
 										数字iが今いるページと一緒ならリンクにしない＋別の色を指定
 										
 										3ページ目にいるときは3ページ目のリンクに飛べないようにしている処理
 										今いるページは押せない。という制御
 										-->
-									<span th:if="${i == housePage.getNumber()}"
-										class="page-link active moattravel-active" th:text="${i + 1}"></span>
+										<span th:if="${i == housePage.getNumber()}"
+											class="page-link active moattravel-active" th:text="${i + 1}"></span>
 
-									<!-- getNumber() の役割
+										<!-- getNumber() の役割
 												今いるページ番号の取得
 												ただし、0からスタートするからテキスト（ユーザー目線）ではその値に
 												+1したものを見せている
 												ので、見かけ上は0ページ目が存在していない
 											-->
-									<a th:unless="${i == housePage.getNumber()}"
-										th:href="@{/admin/houses(page=${i},keyword=${keyword})}"
-										class="page-link moattravel-page-link" th:text="${i + 1}"></a>
-								</li>
-								<li class="page-item">
-									<span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
-									<a th:unless="${housePage.isLast()}"
-										th:href="@{/admin/houses(page=${housePage.getNumber()+1},keyword=${keyword})}"
-										class="page-link moattravel-page-link">次</a>
+										<a th:unless="${i == housePage.getNumber()}"
+											th:href="@{/admin/houses(page=${i},keyword=${keyword})}"
+											class="page-link moattravel-page-link" th:text="${i + 1}"></a>
+									</li>
+									<li class="page-item">
+										<span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
+										<a th:unless="${housePage.isLast()}"
+											th:href="@{/admin/houses(page=${housePage.getNumber()+1},keyword=${keyword})}"
+											class="page-link moattravel-page-link">次</a>
 
-								</li>
-							</ul>
-						</nav>
+									</li>
+								</ul>
+							</nav>
+						</div>
 					</div>
 				</div>
 			</div>
-
 		</main>
 
 
