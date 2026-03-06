@@ -28,8 +28,9 @@ public class HouseEditForm{
 	private Integer price;
 	//定員
 	@NotNull(message ="定員を入力してください。")
-	private Integer capacity;
 	@Min(value = 1,message ="定員は1人以上に設定してください")
+	private Integer capacity;
+
 	//郵便番号
 	@NotBlank(message ="郵便番号を入力してください。")
 	private String postalCode;

@@ -181,4 +181,19 @@ public class AdminHouseController {
 		
 		return"admin/houses/edit";
 	}
+	
+	@PostMapping("/{id}/update")
+	 public String update(@ModelAttribute @Validated HouseEditForm houseEditForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+		if(bindingResult.hasErrors()) {
+			return "admin/houses/edit";
+		}
+		houseService.update(houseEditForm);
+		redirectAttributes.addFlashAttribute("successMessage","民宿情報を編集しました");
+			/*	コロン忘れない
+			 * redirect:  ← これは命令
+			 * /admin/houses ← 移動先URL
+			 * 二つを区別するためにコロンを加えている
+			 */
+		return "redirect:/admin/houses";
+	}
 }
