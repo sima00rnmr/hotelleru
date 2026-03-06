@@ -170,30 +170,44 @@ public class AdminHouseController {
 		redirectAttributes.addFlashAttribute("successMessage", "民宿を登録しました。");
 		return "redirect:/admin/houses";
 	}
+
 	@GetMapping("/{id}/edit")
-	public String edit(@PathVariable(name = "id")Integer id, Model model) {
-		House house =houseRepository.getReferenceById(id);
-		String imageName =house.getImageName();
-		HouseEditForm houseEditForm = new HouseEditForm(house.getId(),house.getName(),null,house.getDescription(),house.getPrice(),house.getCapacity(),house.getPostalCode(),house.getAddress(),house.getPhoneNumber());
-		
-		model.addAttribute("imageName",imageName);
-		model.addAttribute("houseEditForm",houseEditForm);
-		
-		return"admin/houses/edit";
+	public String edit(@PathVariable(name = "id") Integer id, Model model) {
+		House house = houseRepository.getReferenceById(id);
+		String imageName = house.getImageName();
+		HouseEditForm houseEditForm = new HouseEditForm(house.getId(), house.getName(), null, house.getDescription(),
+				house.getPrice(), house.getCapacity(), house.getPostalCode(), house.getAddress(),
+				house.getPhoneNumber());
+
+		model.addAttribute("imageName", imageName);
+		model.addAttribute("houseEditForm", houseEditForm);
+
+		return "admin/houses/edit";
 	}
-	
+
 	@PostMapping("/{id}/update")
-	 public String update(@ModelAttribute @Validated HouseEditForm houseEditForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-		if(bindingResult.hasErrors()) {
+	public String update(@ModelAttribute @Validated HouseEditForm houseEditForm, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
 			return "admin/houses/edit";
 		}
 		houseService.update(houseEditForm);
-		redirectAttributes.addFlashAttribute("successMessage","民宿情報を編集しました");
-			/*	コロン忘れない
-			 * redirect:  ← これは命令
-			 * /admin/houses ← 移動先URL
-			 * 二つを区別するためにコロンを加えている
-			 */
+		redirectAttributes.addFlashAttribute("successMessage", "民宿情報を編集しました");
+		/*	コロン忘れない
+		 * redirect:  ← これは命令
+		 * /admin/houses ← 移動先URL
+		 * 二つを区別するためにコロンを加えている
+		 */
 		return "redirect:/admin/houses";
+	}
+
+	@PostMapping("/{id}/delete")
+	public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
+		houseRepository.deleteById(id);
+
+		redirectAttributes.addFlashAttribute("successMessage", "民宿を削除しました。");
+
+		return "redirect:/admin/houses";
+
 	}
 }
