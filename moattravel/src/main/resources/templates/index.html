@@ -17,19 +17,23 @@
         <!-- ヘッダー -->
         <div th:replace="~{fragment :: header}"></div>
 
-        <main>
-            <div class="container pt-4 pb-5 moattravel-container">
+		<main>
+		    <div class="container pt-4 pb-5 moattravel-container">
 
-                <div th:if="${param.loggedIn}" class="alert alert-info">
-                    ログインしました。
-                </div>
+		        <div th:if="${param.loggedIn}" class="alert alert-info">
+		            ログインしました。
+		        </div>
 
-                <div th:if="${param.loggedOut}" class="alert alert-info">
-                    ログアウトしました。
-                </div>
+		        <div th:if="${param.loggedOut}" class="alert alert-info">
+		            ログアウトしました。
+		        </div>
 
-            </div>
-        </main>
+		        <div th:if="${successMessage}" class="alert alert-info">
+		            <span th:text="${successMessage}"></span>
+		        </div>
+
+		    </div>
+		</main>
 
         <!-- フッター -->
         <div th:replace="~{fragment :: footer}"></div>
