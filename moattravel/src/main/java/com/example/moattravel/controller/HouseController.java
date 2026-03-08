@@ -1,4 +1,5 @@
 package com.example.moattravel.controller;
+//検索→並び替えに変えるため、それに該当するコード（検索処理）の削除
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -30,11 +32,9 @@ public class HouseController {
 			@RequestParam(name = "order", required = false) String order,
 			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
 			Model model) {
-
 		Page<House> housePage;
 
 		if (keyword != null && !keyword.isEmpty()) {
-			housePage = houseRepository.findByNameLikeOrAddressLike("%" + keyword + "%", "%" + keyword + "%", pageable);
 			if (order != null && order.equals("priceAsc")) {
 				housePage = houseRepository.findByNameLikeOrAddressLikeOrderByPriceAsc("%" + keyword + "%",
 						"%" + keyword + "%", pageable);
@@ -43,21 +43,18 @@ public class HouseController {
 						"%" + keyword + "%", pageable);
 			}
 		} else if (area != null && !area.isEmpty()) {
-			housePage = houseRepository.findByAddressLike("%" + area + "%", pageable);
 			if (order != null && order.equals("priceAsc")) {
 				housePage = houseRepository.findByAddressLikeOrderByPriceAsc("%" + area + "%", pageable);
 			} else {
 				housePage = houseRepository.findByAddressLikeOrderByCreatedAtDesc("%" + area + "%", pageable);
 			}
 		} else if (price != null) {
-			housePage = houseRepository.findByPriceLessThanEqual(price, pageable);
 			if (order != null && order.equals("priceAsc")) {
 				housePage = houseRepository.findByPriceLessThanEqualOrderByPriceAsc(price, pageable);
 			} else {
 				housePage = houseRepository.findByPriceLessThanEqualOrderByCreatedAtDesc(price, pageable);
 			}
 		} else {
-			housePage = houseRepository.findAll(pageable);
 			if (order != null && order.equals("priceAsc")) {
 				housePage = houseRepository.findAllByOrderByPriceAsc(pageable);
 			} else {
@@ -72,5 +69,14 @@ public class HouseController {
 		model.addAttribute("order", order);
 
 		return "houses/index";
+	}
+
+	@GetMapping("/{id}")
+	public String show(@PathVariable(name = "id") Integer id, Model model) {
+		House house = houseRepository.getReferenceById(id);
+
+		model.addAttribute("house", house);
+
+		return "houses/show";
 	}
 }
