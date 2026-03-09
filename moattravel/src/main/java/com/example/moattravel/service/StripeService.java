@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.moattravel.form.ReservationRegisterForm;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 
 @Service
@@ -20,7 +21,7 @@ public class StripeService {
     public String createStripeSession(String houseName, ReservationRegisterForm reservationRegisterForm, HttpServletRequest httpServletRequest) {
 
     	Stripe.apiKey = stripeSecretKey;
-
+    	
 
 
         String requestUrl = new String(httpServletRequest.getRequestURL());
