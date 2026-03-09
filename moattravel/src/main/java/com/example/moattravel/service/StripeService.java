@@ -20,8 +20,8 @@ import com.stripe.param.checkout.SessionRetrieveParams;
 @Service
 public class StripeService {
 
-    @Value("${stripe.api-key}")
-    private String stripeApiKey;
+    @Value("${stripe.secret-keyA}")
+    private String stripesecretKey;
 
     private final ReservationService reservationService;
 
@@ -31,7 +31,8 @@ public class StripeService {
 
     // セッションを作成し、Stripeに必要な情報を返す
     public String createStripeSession(String houseName, ReservationRegisterForm reservationRegisterForm, HttpServletRequest httpServletRequest) {
-        Stripe.apiKey = stripeApiKey;
+        Stripe.apiKey = stripesecretKey;
+        Stripe.apiKey = stripesecretKey;
 
         String requestUrl = new String(httpServletRequest.getRequestURL());
 
@@ -76,7 +77,7 @@ public class StripeService {
 
     // セッションから予約情報を取得し、ReservationServiceクラスを介してデータベースに登録する
     public void processSessionCompleted(Event event) {
-    	Stripe.apiKey = stripeApiKey;//一応追加してみたが…怪しい
+    	Stripe.apiKey = stripesecretKey;//一応追加してみたが…怪しい
 
         Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
 

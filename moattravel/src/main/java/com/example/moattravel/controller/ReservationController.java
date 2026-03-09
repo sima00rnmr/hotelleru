@@ -120,7 +120,7 @@ public class ReservationController {
 
 		return "reservations/confirm";
 	}
-	/*
+	/*create()メソッドはもう使わないのでコメントアウト
 	@PostMapping("/houses/{id}/reservations/create")
 	public String create(@ModelAttribute ReservationRegisterForm reservationRegisterForm) {
 	    reservationService.create(reservationRegisterForm);
